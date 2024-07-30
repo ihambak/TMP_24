@@ -1,0 +1,141 @@
+React와 TypeScript를 사용하여 jqxGrid를 구현하고, 스프레드시트 기능을 포함한 모든 기능을 구현하며, 별도로 속성과 데이터를 관리할 수 있는 메뉴와 페이지를 만들기 위한 기본 구조를 제안합니다. 아래는 이를 위한 단계별 가이드입니다.1. 프로젝트 초기화npx create-react-app jqxgrid-app --template typescript
+cd jqxgrid-app2. jqxGrid 패키지 설치npm install jqwidgets-scripts3. jqxGrid 컴포넌트 생성src/components/JqxGrid.tsx 파일을 생성하고 아래와 같이 작성합니다.import React, { useEffect, useRef } from 'react';
+import 'jqwidgets-scripts/jqwidgets/styles/jqx.base.css';
+import 'jqwidgets-scripts/jqwidgets/styles/jqx.light.css';
+import jqx from 'jqwidgets-scripts/jqwidgets';
+
+const JqxGrid = () => {
+  const gridRef = useRef<any>(null);
+
+  useEffect(() => {
+    const data = [
+      { id: 1, name: 'John', age: 30, country: 'USA' },
+      { id: 2, name: 'Jane', age: 25, country: 'UK' },
+      { id: 3, name: 'Peter', age: 35, country: 'France' }
+    ];
+
+    const source = {
+      localdata: data,
+      datatype: 'array',
+      datafields: [
+        { name: 'id', type: 'number' },
+        { name: 'name', type: 'string' },
+        { name: 'age', type: 'number' },
+        { name: 'country', type: 'string' }
+      ]
+    };
+
+    const dataAdapter = new jqx.dataAdapter(source);
+
+    jqx(gridRef.current).jqxGrid({
+      width: 850,
+      source: dataAdapter,
+      columnsresize: true,
+      columns: [
+        { text: 'ID', datafield: 'id', width: 50 },
+        { text: 'Name', datafield: 'name', width: 250 },
+        { text: 'Age', datafield: 'age', width: 150 },
+        { text: 'Country', datafield: 'country', width: 150 }
+      ]
+    });
+  }, []);
+
+  return <div ref={gridRef}></div>;
+};
+
+export default JqxGrid;4. 데이터 및 속성 관리 페이지src/components/GridSettings.tsx 파일을 생성하고 아래와 같이 작성합니다.import React, { useState } from 'react';
+
+const GridSettings = () => {
+  const [gridData, setGridData] = useState([
+    { id: 1, name: 'John', age: 30, country: 'USA' },
+    { id: 2, name: 'Jane', age: 25, country: 'UK' },
+    { id: 3, name: 'Peter', age: 35, country: 'France' }
+  ]);
+
+  const handleAddRow = () => {
+    const newRow = { id: gridData.length + 1, name: '', age: 0, country: '' };
+    setGridData([...gridData, newRow]);
+  };
+
+  const handleRemoveRow = (id: number) => {
+    const updatedData = gridData.filter(row => row.id !== id);
+    setGridData(updatedData);
+  };
+
+  return (
+    <div>
+      <h2>Grid Settings</h2>
+      <button onClick={handleAddRow}>Add Row</button>
+      {gridData.map(row => (
+        <div key={row.id}>
+          <input
+            type="text"
+            value={row.name}
+            onChange={(e) =>
+              setGridData(gridData.map(r =>
+                r.id === row.id ? { ...r, name: e.target.value } : r
+              ))
+            }
+          />
+          <input
+            type="number"
+            value={row.age}
+            onChange={(e) =>
+              setGridData(gridData.map(r =>
+                r.id === row.id ? { ...r, age: parseInt(e.target.value) } : r
+              ))
+            }
+          />
+          <input
+            type="text"
+            value={row.country}
+            onChange={(e) =>
+              setGridData(gridData.map(r =>
+                r.id === row.id ? { ...r, country: e.target.value } : r
+              ))
+            }
+          />
+          <button onClick={() => handleRemoveRow(row.id)}>Remove</button>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default GridSettings;5. 메인 페이지에서 컴포넌트 사용src/App.tsx 파일을 수정하여 Grid와 GridSettings를 포함합니다.import React from 'react';
+import './App.css';
+import JqxGrid from './components/JqxGrid';
+import GridSettings from './components/GridSettings';
+
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <h1>jqxGrid with React and TypeScript</h1>
+      </header>
+      <main>
+        <JqxGrid />
+        <GridSettings />
+      </main>
+    </div>
+  );
+}
+
+export default App;6. CSS 스타일 적용src/App.css 파일을 아래와 같이 수정하여 간단한 스타일을 적용합니다..App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 10vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+main {
+  padding: 20px;
+}7. 앱 실행npm start이제 React와 TypeScript로 구현된 jqxGrid와 데이터 및 속성 관리 페이지를 확인할 수 있습니다. 필요에 따라 추가적인 기능을 구현하고 스타일을 개선할 수 있습니다.
