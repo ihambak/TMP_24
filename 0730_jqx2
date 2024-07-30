@@ -139,3 +139,30 @@ export default App;6. CSS 스타일 적용src/App.css 파일을 아래와 같이
 main {
   padding: 20px;
 }7. 앱 실행npm start이제 React와 TypeScript로 구현된 jqxGrid와 데이터 및 속성 관리 페이지를 확인할 수 있습니다. 필요에 따라 추가적인 기능을 구현하고 스타일을 개선할 수 있습니다.
+
+
+
+
+
+확실히 이해하기 쉽도록, 프로젝트 구조를 맵 형태로 표현하겠습니다. 각 파일과 폴더는 들여쓰기로 표현하겠습니다.jqxgrid-app/
+│
+├── node_modules/
+│
+├── public/
+│   ├── index.html
+│   └── ...
+│
+├── src/
+│   ├── components/
+│   │   ├── JqxGrid.tsx
+│   │   └── GridSettings.tsx
+│   │
+│   ├── App.css
+│   ├── App.tsx
+│   ├── index.css
+│   ├── index.tsx
+│   └── react-app-env.d.ts
+│
+├── package.json
+├── tsconfig.json
+└── README.md설명jqxgrid-app/: 프로젝트 루트 디렉토리node_modules/: 프로젝트 종속성 모듈이 저장되는 디렉토리public/: 정적 파일이 저장되는 디렉토리index.html: 메인 HTML 파일src/: 소스 파일이 저장되는 디렉토리components/: React 컴포넌트 파일이 저장되는 디렉토리JqxGrid.tsx: jqxGrid 컴포넌트GridSettings.tsx: 데이터 및 속성 관리 컴포넌트App.css: 앱의 전반적인 스타일을 정의한 CSS 파일App.tsx: 메인 React 컴포넌트 파일index.css: 전역 스타일을 정의한 CSS 파일index.tsx: React 앱의 진입점 파일react-app-env.d.ts: TypeScript 환경 설정 파일package.json: 프로젝트 종속성 및 스크립트 관리 파일tsconfig.json: TypeScript 설정 파일README.md: 프로젝트 설명 파일
