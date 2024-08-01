@@ -1,0 +1,454 @@
+Toast UI Calendar는 JavaScript로 개발된 강력한 오픈 소스 캘린더 라이브러리입니다. 다양한 일정 관리 기능을 제공하며, 웹 애플리케이션에 쉽게 통합할 수 있습니다. 다음은 Toast UI Calendar의 주요 특징과 기능입니다:
+
+1. **다양한 뷰 모드**:
+   - 월간, 주간, 일간 뷰 제공.
+   - 사용자가 원하는 대로 커스터마이징 가능.
+
+2. **다양한 일정 관리 기능**:
+   - 일정 생성, 수정, 삭제 기능.
+   - 드래그 앤 드롭으로 일정 이동 가능.
+   - 반복 일정 설정 가능.
+
+3. **다양한 스타일링 옵션**:
+   - CSS를 통해 사용자 정의 스타일 적용 가능.
+   - 테마 설정 및 커스터마이징 가능.
+
+4. **다양한 데이터 소스 지원**:
+   - JSON, REST API 등 다양한 데이터 소스에서 일정 데이터를 불러올 수 있음.
+
+5. **호환성**:
+   - 대부분의 최신 브라우저에서 원활히 작동.
+   - 반응형 디자인을 지원하여 다양한 디바이스에서 사용 가능.
+
+6. **확장성**:
+   - 플러그인 시스템을 통해 기능 확장 가능.
+   - 커뮤니티의 다양한 플러그인과 확장 기능 사용 가능.
+
+Toast UI Calendar는 뛰어난 성능과 다양한 기능을 제공하여 일정 관리가 필요한 웹 애플리케이션에 유용하게 사용될 수 있습니다. 공식 문서와 GitHub 리포지토리를 통해 자세한 사용법과 예제를 확인할 수 있습니다.
+
+
+
+
+Toast UI Calendar의 모든 옵션을 빠짐없이 설명하겠습니다. 이 라이브러리는 다양한 설정을 통해 캘린더의 동작과 외관을 세밀하게 제어할 수 있습니다. 아래는 주요 옵션들에 대한 상세 설명입니다.
+
+### 주요 옵션
+
+#### 1. `defaultView`
+캘린더가 처음 로드될 때의 기본 뷰 모드를 설정합니다.
+- 가능한 값: `day`, `week`, `month`
+
+```javascript
+const calendar = new tui.Calendar('#calendar', {
+    defaultView: 'month'
+});
+```
+
+#### 2. `taskView`
+캘린더에 작업(할 일 목록)을 표시할지 여부를 설정합니다.
+- 가능한 값: `true`, `false`, `['milestone', 'task']`
+
+```javascript
+const calendar = new tui.Calendar('#calendar', {
+    taskView: true
+});
+```
+
+#### 3. `scheduleView`
+캘린더에 일정(시간 단위의 일정)을 표시할지 여부를 설정합니다.
+- 가능한 값: `true`, `false`, `['allday', 'time']`
+
+```javascript
+const calendar = new tui.Calendar('#calendar', {
+    scheduleView: ['time']
+});
+```
+
+#### 4. `usageStatistics`
+Toast UI Calendar 사용 통계를 보낼지 여부를 설정합니다.
+- 기본값: `true`
+
+```javascript
+const calendar = new tui.Calendar('#calendar', {
+    usageStatistics: false
+});
+```
+
+#### 5. `isReadOnly`
+캘린더를 읽기 전용 모드로 설정합니다. 읽기 전용 모드에서는 일정을 추가하거나 수정할 수 없습니다.
+- 기본값: `false`
+
+```javascript
+const calendar = new tui.Calendar('#calendar', {
+    isReadOnly: true
+});
+```
+
+#### 6. `useCreationPopup`
+일정 생성 팝업을 사용할지 여부를 설정합니다.
+- 기본값: `false`
+
+```javascript
+const calendar = new tui.Calendar('#calendar', {
+    useCreationPopup: true
+});
+```
+
+#### 7. `useDetailPopup`
+일정 상세보기 팝업을 사용할지 여부를 설정합니다.
+- 기본값: `false`
+
+```javascript
+const calendar = new tui.Calendar('#calendar', {
+    useDetailPopup: true
+});
+```
+
+#### 8. `timezones`
+다중 시간대 표시를 위한 설정입니다.
+- `timezoneOffset`: 시간대 오프셋 (분 단위)
+- `displayLabel`: 시간대 라벨
+- `tooltip`: 시간대 툴팁
+
+```javascript
+const calendar = new tui.Calendar('#calendar', {
+    timezones: [
+        {
+            timezoneOffset: 540, // KST (UTC+9)
+            displayLabel: 'KST',
+            tooltip: 'Korea Standard Time'
+        },
+        {
+            timezoneOffset: -420, // PDT (UTC-7)
+            displayLabel: 'PDT',
+            tooltip: 'Pacific Daylight Time'
+        }
+    ]
+});
+```
+
+#### 9. `template`
+캘린더의 다양한 요소를 커스터마이징할 수 있는 템플릿 옵션입니다.
+
+```javascript
+const calendar = new tui.Calendar('#calendar', {
+    template: {
+        monthGridHeader: function(model) {
+            const date = new Date(model.date);
+            return `<span class="calendar-week-dayname-name">${date.getDay()}</span>`;
+        },
+        monthDayname: function(dayname) {
+            return `<span class="calendar-dayname">${dayname.label}</span>`;
+        },
+        // 추가 템플릿 설정 가능
+    }
+});
+```
+
+### 뷰 옵션
+
+#### 10. `week`
+주간 뷰의 설정 옵션입니다.
+
+```javascript
+const calendar = new tui.Calendar('#calendar', {
+    defaultView: 'week',
+    week: {
+        startDayOfWeek: 1, // 월요일을 시작 요일로 설정
+        daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        narrowWeekend: true, // 주말 칸을 좁게 표시
+        showTimezoneCollapseButton: true, // 시간대 접기 버튼 표시
+        timezones: [
+            {
+                timezoneOffset: 540, // KST (UTC+9)
+                displayLabel: 'KST',
+                tooltip: 'Korea Standard Time'
+            },
+            {
+                timezoneOffset: -420, // PDT (UTC-7)
+                displayLabel: 'PDT',
+                tooltip: 'Pacific Daylight Time'
+            }
+        ],
+        hourStart: 8, // 오전 8시부터 시작
+        hourEnd: 20, // 오후 8시까지 표시
+        workweek: false // 주중만 표시 여부
+    }
+});
+```
+
+#### 11. `month`
+월간 뷰의 설정 옵션입니다.
+
+```javascript
+const calendar = new tui.Calendar('#calendar', {
+    defaultView: 'month',
+    month: {
+        startDayOfWeek: 0, // 일요일을 시작 요일로 설정
+        daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        narrowWeekend: true, // 주말 칸을 좁게 표시
+        visibleWeeksCount: 6, // 보이는 주의 수
+        isAlways6Week: false, // 항상 6주로 표시할지 여부
+        workweek: false // 주중만 표시 여부
+    }
+});
+```
+
+### 기타 옵션
+
+#### 12. `theme`
+캘린더의 색상, 폰트 등 스타일을 커스터마이징할 수 있습니다.
+
+```javascript
+const calendar = new tui.Calendar('#calendar', {
+    theme: {
+        'common.border': '1px solid #ddd',
+        'common.backgroundColor': '#fff',
+        'common.holiday.color': '#f54f3d',
+        'common.saturday.color': '#3162aa',
+        'common.dayname.color': '#333',
+        'common.today.color': '#009688',
+        'common.creationGuide.backgroundColor': 'rgba(81, 92, 230, 0.05)',
+        'common.creationGuide.border': '1px solid #515ce6'
+        // 추가 테마 설정 가능
+    }
+});
+```
+
+#### 13. `calendars`
+캘린더의 일정을 표시할 여러 개의 서브 캘린더를 설정할 수 있습니다.
+
+```javascript
+const calendar = new tui.Calendar('#calendar', {
+    calendars: [
+        {
+            id: '1',
+            name: 'My Calendar',
+            color: '#ffffff',
+            bgColor: '#9e5fff',
+            dragBgColor: '#9e5fff',
+            borderColor: '#9e5fff'
+        },
+        {
+            id: '2',
+            name: 'Company',
+            color: '#ffffff',
+            bgColor: '#00a9ff',
+            dragBgColor: '#00a9ff',
+            borderColor: '#00a9ff'
+        }
+    ]
+});
+```
+
+### 이벤트 핸들러
+
+Toast UI Calendar는 다양한 이벤트를 제공합니다. 이벤트 핸들러를 통해 일정 생성, 수정, 삭제 등의 작업을 처리할 수 있습니다.
+
+```javascript
+const calendar = new tui.Calendar('#calendar');
+
+// 일정 생성 이벤트 핸들러
+calendar.on('beforeCreateSchedule', function(event) {
+    const schedule = {
+        id: String(Math.random()),
+        calendarId: '1',
+        title: event.title,
+        category: 'time',
+        dueDateClass: '',
+        start: event.start,
+        end: event.end
+    };
+    calendar.createSchedules([schedule]);
+});
+
+// 일정 수정 이벤트 핸들러
+calendar.on('beforeUpdateSchedule', function(event) {
+    const {schedule, changes} = event;
+    calendar.updateSchedule(schedule.id, schedule.calendarId, changes);
+});
+
+// 일정 삭제 이벤트 핸들러
+calendar.on('beforeDeleteSchedule', function(event) {
+    const {schedule} = event;
+    calendar.deleteSchedule(schedule.id, schedule.calendarId);
+});
+```
+
+이 외에도 Toast UI Calendar는 다양한 옵션과 API를 제공하여 고도로 커스터마이징된 캘린더를 구현할 수 있습니다. 추가적인 옵션과 사용법은 [공식 문서](https://github.com/nhn/tui.calendar)를 참고하세요.
+
+
+
+도메인 모델에서 주황색으로 표시된 항목은 관계와 복잡한 비즈니스 로직을 나타내기 위해 사용됩니다. 이를 통해 데이터의 일관성을 유지하고, 특정 규칙과 제약 조건을 구현할 수 있습니다. 예를 들어, 일정 참석자와 같은 개념을 포함하는 관계를 정의해야 할 경우, 주황색으로 표시된 관계는 매우 중요합니다. 아래에 다시 한번 도메인 모델을 개선하고 필요한 관계를 추가해 보겠습니다.
+
+### 개선된 도메인 모델
+
+#### 엔티티 정의 및 관계
+
+1. **Member**: 회원 정보를 저장하는 엔티티.
+   - Attributes:
+     - `ID` (AutoNumber): 고유 식별자
+     - `Name` (String): 회원 이름
+     - `Email` (String): 회원 이메일
+   - Associations:
+     - `Member_Calendar` (1 - n): 한 회원은 여러 캘린더를 가질 수 있습니다.
+
+2. **Calendar**: 캘린더 정보를 저장하는 엔티티.
+   - Attributes:
+     - `ID` (AutoNumber): 고유 식별자
+     - `Name` (String): 캘린더 이름
+   - Associations:
+     - `Calendar_Owner` (n - 1): 한 캘린더는 한 회원에 속합니다.
+     - `Calendar_Event` (1 - n): 한 캘린더는 여러 이벤트를 가질 수 있습니다.
+
+3. **Event**: 이벤트 정보를 저장하는 엔티티.
+   - Attributes:
+     - `ID` (AutoNumber): 고유 식별자
+     - `Title` (String): 이벤트 제목
+     - `StartDate` (DateTime): 이벤트 시작 시간
+     - `EndDate` (DateTime): 이벤트 종료 시간
+   - Associations:
+     - `Event_Calendar` (n - 1): 한 이벤트는 한 캘린더에 속합니다.
+     - `Event_Attendee` (1 - n): 한 이벤트는 여러 참석자를 가질 수 있습니다.
+
+4. **Attendee**: 이벤트 참석자 정보를 저장하는 엔티티.
+   - Attributes:
+     - `ID` (AutoNumber): 고유 식별자
+   - Associations:
+     - `Attendee_Event` (n - 1): 한 참석자는 한 이벤트에 속합니다.
+     - `Attendee_Member` (n - 1): 한 참석자는 한 회원에 속합니다.
+
+### 주황색으로 표시된 관계
+
+#### 관계 설정
+
+1. **Member**와 **Calendar**:
+   - 한 회원은 여러 캘린더를 가질 수 있습니다. (`Member` 1 - n `Calendar`)
+   - 한 캘린더는 한 회원에 속합니다. (`Calendar` n - 1 `Member`)
+
+2. **Calendar**와 **Event**:
+   - 한 캘린더는 여러 이벤트를 가질 수 있습니다. (`Calendar` 1 - n `Event`)
+   - 한 이벤트는 한 캘린더에 속합니다. (`Event` n - 1 `Calendar`)
+
+3. **Event**와 **Attendee**:
+   - 한 이벤트는 여러 참석자를 가질 수 있습니다. (`Event` 1 - n `Attendee`)
+   - 한 참석자는 여러 이벤트에 참석할 수 있습니다. (`Attendee` n - 1 `Event`)
+
+4. **Attendee**와 **Member**:
+   - 한 회원은 여러 이벤트에 참석할 수 있습니다. (`Member` 1 - n `Attendee`)
+   - 한 참석자는 한 회원에 속합니다. (`Attendee` n - 1 `Member`)
+
+이 모델에서는 `Attendee` 엔티티가 `Event`와 `Member` 사이의 다대다 관계를 해결하는 조인 테이블의 역할을 합니다.
+
+### Mendix 페이지 구성
+
+#### 회원 관리 페이지
+
+1. **MemberOverviewPage**: 회원 목록을 보여주고, 새 회원을 추가하거나 기존 회원을 편집할 수 있는 페이지.
+   - `Data Grid`를 사용하여 `Member` 목록을 표시.
+   - `New`, `Edit`, `Delete` 버튼을 추가하여 회원을 관리.
+
+2. **MemberDetailPage**: 회원 세부 정보를 입력하거나 수정할 수 있는 페이지.
+   - `Data View`를 사용하여 `Member` 정보를 표시하고, 이름과 이메일을 입력받음.
+
+#### 캘린더 관리 페이지
+
+1. **CalendarOverviewPage**: 사용자별 캘린더 목록을 보여주는 페이지.
+   - `Data Grid`를 사용하여 `Calendar` 목록을 표시.
+   - `New`, `Edit`, `Delete` 버튼을 추가하여 캘린더를 관리.
+
+2. **CalendarDetailPage**: 캘린더 세부 정보를 입력하거나 수정할 수 있는 페이지.
+   - `Data View`를 사용하여 `Calendar` 정보를 표시하고, 이름을 입력받음.
+
+#### 일정 관리 페이지
+
+1. **EventOverviewPage**: 캘린더에 등록된 일정 목록을 보여주는 페이지.
+   - `Data Grid`를 사용하여 `Event` 목록을 표시.
+   - `New`, `Edit`, `Delete` 버튼을 추가하여 일정을 관리.
+
+2. **EventDetailPage**: 일정 세부 정보를 입력하거나 수정할 수 있는 페이지.
+   - `Data View`를 사용하여 `Event` 정보를 표시하고, 제목, 시작 시간, 종료 시간을 입력받음.
+
+#### 참석자 관리 페이지
+
+1. **AttendeeOverviewPage**: 일정에 참석하는 회원 목록을 보여주는 페이지.
+   - `Data Grid`를 사용하여 `Attendee` 목록을 표시.
+   - `New`, `Edit`, `Delete` 버튼을 추가하여 참석자를 관리.
+
+2. **AttendeeDetailPage**: 참석자 세부 정보를 입력하거나 수정할 수 있는 페이지.
+   - `Data View`를 사용하여 `Attendee` 정보를 표시하고, `Event`와 `Member`를 선택할 수 있도록 함.
+
+### 마이크로플로우 및 나노플로우
+
+#### 마이크로플로우 예제
+
+- **CreateMember**: 새 회원을 생성하는 마이크로플로우.
+  - **Input Parameters**: `Name`, `Email`.
+  - **Actions**:
+    1. Create `Member` 객체.
+    2. `Name`과 `Email`을 설정.
+    3. `Member` 객체를 커밋.
+
+- **CreateCalendar**: 새 캘린더를 생성하는 마이크로플로우.
+  - **Input Parameters**: `Name`, `Owner`.
+  - **Actions**:
+    1. Create `Calendar` 객체.
+    2. `Name`과 `Owner`를 설정.
+    3. `Calendar` 객체를 커밋.
+
+- **CreateEvent**: 새 일정을 생성하는 마이크로플로우.
+  - **Input Parameters**: `Title`, `StartDate`, `EndDate`, `Calendar`.
+  - **Actions**:
+    1. Create `Event` 객체.
+    2. `Title`, `StartDate`, `EndDate`, `Calendar`를 설정.
+    3. `Event` 객체를 커밋.
+
+- **AddAttendee**: 일정에 참석자를 추가하는 마이크로플로우.
+  - **Input Parameters**: `Event`, `Member`.
+  - **Actions**:
+    1. Create `Attendee` 객체.
+    2. `Event`와 `Member`를 설정.
+    3. `Attendee` 객체를 커밋.
+
+#### 나노플로우 예제
+
+- **ShowEventDetails**: 일정 세부 정보를 팝업으로 보여주는 나노플로우.
+  - **Input Parameters**: `EventID`.
+  - **Actions**:
+    1. Retrieve `Event` 객체 by `EventID`.
+    2. `EventDetailPage`를 `Event` 객체와 함께 표시.
+
+- **DeleteEvent**: 일정을 삭제하는 나노플로우.
+  - **Input Parameters**: `EventID`.
+  - **Actions**:
+    1. Retrieve `Event` 객체 by `EventID`.
+    2. `Event` 객체를 삭제.
+
+- **UpdateEvent**: 일정을 업데이트하는 나노플로우.
+  - **Input Parameters**: `EventID`, `Title`, `StartDate`, `EndDate`.
+  - **Actions**:
+    1. Retrieve `Event` 객체 by `EventID`.
+    2. `Title`, `StartDate`, `EndDate`를 업데이트.
+    3. `Event` 객체를 커밋.
+
+### Toast UI Calendar와 Mendix 통합
+
+#### CalendarViewPage 구현
+
+1. **HTML 파일** (`index.html`):
+   - Toast UI Calendar를 포함한 HTML 파일을 생성.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Calendar View</title>
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui.calendar/latest/tui-calendar.css">
+</head>
+<body>
+    <div id="calendar"></div>
+    <script src="https://uicdn.toast.com/tui.code-snippet/latest/tui-code-snippet.js"></script>
+    <script src="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.js"></script>
+    <script src="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.js"></script>
+    <script src="https://uicdn.toast.com/tui.calendar/latest/tui-calendar.js"></script>
+   
