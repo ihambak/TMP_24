@@ -1,3 +1,4 @@
+```
 …or create a new repository on the command line
 echo "# cgt-tree" >> README.md
 git init
@@ -15,3 +16,4 @@ git push -u origin main
 
 git branch -M 1.0.0
 git push -u origin 1.0.0
+```
