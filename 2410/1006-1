@@ -1,0 +1,227 @@
+### tsx
+```
+import { ReactElement, createElement, useCallback, useState, useMemo, CSSProperties, useEffect } from "react";
+import { Table, Input } from "antd";
+import { ColumnsType } from "antd/es/table";
+
+type ValueStatus = "available" | "loading" | "unavailable";
+
+interface ListValue<T> {
+    status: ValueStatus;
+    items?: T[];
+}
+
+interface ListActionValue {
+    execute: (item: any) => void;
+}
+
+interface ColumnListItem {
+    headerSeq: number;
+    datasourceColumn: string;
+    headerName: string;
+}
+
+interface TableDataItem {
+    name: string;
+    age: number;
+    key: string;
+    address: string;
+    phone: string;
+}
+
+export interface MxWidgetSampleContainerProps {
+    name: string;
+    class: string;
+    style?: CSSProperties;
+    tabIndex?: number;
+}
+
+export interface MxWidgetSampleProps {
+    tableTitle: string;
+    pageSize: number;
+    searchable: boolean;
+    onRowClick?: ListActionValue;
+    data: ListValue<TableDataItem>;
+    columnList: ListValue<ColumnListItem>;
+}
+
+export function MxWidgetSample(props: MxWidgetSampleContainerProps & MxWidgetSampleProps): ReactElement {
+    const [searchText, setSearchText] = useState("");
+    const [tableData, setTableData] = useState<TableDataItem[]>([]);
+
+    // 필터링된 데이터를 반환하는 함수
+    const getFilteredData = useCallback(() => {
+        if (props.searchable && searchText) {
+            return tableData.filter(item =>
+                Object.values(item).some(val =>
+                    val?.toString().toLowerCase().includes(searchText.toLowerCase())
+                )
+            );
+        }
+        return tableData;
+    }, [tableData, searchText, props.searchable]);
+
+    // 데이터가 변경될 때마다 테이블 데이터를 설정
+    useEffect(() => {
+        console.log("Data Status:", props.data.status);
+        console.log("Column List Status:", props.columnList.status);
+
+        // 데이터를 props에서 설정
+        if (props.data.status === "available" && props.data.items) {
+            const dataWithKeys = props.data.items.map((item, index) => ({
+                ...item,
+                key: item.key || index.toString(), // 고유한 key 설정
+            }));
+            setTableData(dataWithKeys);
+            console.log("Data Items from props:", dataWithKeys);
+        } else {
+            // 더미 데이터 사용
+            const mockData: ListValue<TableDataItem> = {
+                status: "available",
+                items: [
+                    { key: "1", name: "John", age: 30, address: "New York", phone: "123-4567" },
+                    { key: "2", name: "Doe", age: 25, address: "Los Angeles", phone: "987-6543" }
+                ]
+            };
+            // items가 undefined인 경우 빈 배열로 초기화
+            setTableData(mockData.items || []);
+            console.log("Setting mock data:", mockData.items || []);
+        }
+    }, [props.data, props.columnList]);
+
+    // 테이블 컬럼 설정
+    const columns: ColumnsType<TableDataItem> = useMemo(() => {
+        if (props.columnList.status !== "available" || !props.columnList.items) {
+            console.log("No columns available. Returning empty columns.");
+            return [];
+        }
+
+        return props.columnList.items
+            .sort((a, b) => a.headerSeq - b.headerSeq)
+            .map(col => ({
+                title: col.headerName,
+                dataIndex: col.datasourceColumn, // 이 값이 데이터 속성과 일치해야 함
+                key: col.datasourceColumn,
+                render: (text, record) => {
+                    console.log(`Rendering cell: ${col.datasourceColumn}`, text, record);
+                    return text;
+                }
+            }));
+    }, [props.columnList]);
+
+    const filteredData = getFilteredData();
+    console.log("Rendered columns:", columns);
+    console.log("Filtered data:", filteredData);
+    console.log("Table Data State:", tableData); // 현재 상태의 tableData 출력
+
+    return createElement(
+        "div",
+        { className: props.class, style: props.style, tabIndex: props.tabIndex },
+        [
+            createElement("h2", { key: "title" }, props.tableTitle),
+            props.searchable &&
+            createElement(Input, {
+                key: "search",
+                placeholder: "Search...",
+                onChange: e => setSearchText(e.target.value),
+                style: { marginBottom: 16 }
+            }),
+            createElement(Table<TableDataItem>, {
+                key: "table",
+                columns: columns,
+                dataSource: filteredData,
+                pagination: { pageSize: props.pageSize },
+                onRow: (record) => ({
+                    onClick: () => props.onRowClick?.execute(record)
+                }),
+                rowKey: "key" // 데이터의 고유 key
+            })
+        ]
+    );
+}
+```
+
+### xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<widget id="mendix.mxwidgetsample.MxWidgetSample" pluginWidget="true" needsEntityContext="true" offlineCapable="true"
+        supportedPlatform="Web"
+        xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
+    <name>Mx Widget Sample</name>
+    <description>My widget description</description>
+    <icon>
+        iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAABp1BMVEUAAABV//9mzP9LtP9Ms/9Jtv9NsvdJsfpLtPpJsfdJsfhJsvhJsvdKsvdJsPhKsPhJsfdJsPhJsfdIsfhJsfdIsPdJsfhJsfhJsPhJsPhIsfhIsPdJsPdKsPdKsfdNsvdOsvdPs/dQs/dRtPdStPdTtPdUtfdWtvdXtvdauPdcuPdeufdeufhguvhiu/hju/hkvPhmvfhnvfhpvvhrv/huwPhvwfhxwfhywvhzwvh4xfl5xfl6xfl8xvl9xvl9x/mByPmCyfmFyvmGyvmJzPmKzPmLzfmNzvqPzvqQz/qT0PqU0PqU0fqX0vqY0vqa0/qe1fqg1vqj1/uk1/un2fup2vut2/uv3Puw3Puw3fuz3vu13/u23/u34Pu44Pu64fu64fy84vy94vy+4/y/4/zD5fzE5fzG5vzH5vzI5/zK6PzL6PzR6/zT7P3U7P3V7f3W7f3Y7v3Z7v3c8P3e8f3f8f3g8f3i8v3l8/3l9P3n9P3r9v7t9/7u9/7v+P7w+P7x+f7y+f70+v71+v74/P75/P76/f77/f78/f78/v79/v7+/v7////6dMsRAAAAG3RSTlMAAwURGxwhMTNic3SEh4iVp7XBzejt7vH5/f6PsMNWAAABsklEQVR4AWIYfGAUjIJRMAqYuYREJKWJAqLCPGwY+jnFpEkBEryMqPr5pEkFgkwo9kuTDviR/S9GhgFSHAgDuKXJAQIIA4TIMkAcEY4i0mQBVrgBkuQZwA43QJo8wIFhQEhEOIBQOutHJozDOP5Crp4e1RhkJ0tKGJFd6oNEdtmJyEIzpaZl5nrRZgaHM/2Pf5/vwXXfyagXgG93bwSAlEolowLMm9w83gibhXH2gKKVdD67gTnWjwCk+VVjMQS4suSnnjMLRVFc9sAHvAX2A9fySaXNBMbEZVUWscaHIMRuqwBgD8hDEbnsRmfjUKJkAQZGCTlO/xWBwIADQLIZBlY441MvfoF1xlFS/4fy+bzXKh4dgNJE7L3eh3tmtuWa+AMcMIY3dgUvZQpGEYmMw2kD7HC+R29UqyoXLaBd0QZxzgXgikLLDSqJTKU5HOcS0MsbA9jPqtwCRvXm2eorBbNIJBw3KJ9O4Yl+AAXdnyaLt7PWN3jRWLvzmAVp94zO5+n41/onfo/UpExxZqI0O7NQr0DhIq9Io7hQpbRYp7hiobRqo6ByFcNWuY6CUTAKRgEAo8X0lBD3V30AAAAASUVORK5CYII=
+    </icon>
+    <properties>
+        <propertyGroup caption="General">
+            <!-- 테이블 제목 -->
+            <property key="tableTitle" type="string" defaultValue="Advanced Table">
+                <caption>Table Title</caption>
+                <description>The title displayed above the table.</description>
+            </property>
+
+            <!-- 페이지당 항목 수 -->
+            <property key="pageSize" type="integer" defaultValue="10">
+                <caption>Page Size</caption>
+                <description>The number of items displayed per page in the table.</description>
+            </property>
+
+            <!-- 검색 기능 활성화 -->
+            <property key="searchable" type="boolean" defaultValue="true">
+                <caption>Searchable</caption>
+                <description>Enable or disable table search functionality.</description>
+            </property>
+
+            <!-- 행 클릭 이벤트 -->
+            <property key="onRowClick" type="action">
+                <caption>On Row Click</caption>
+                <description>Triggered when a table row is clicked.</description>
+            </property>
+
+
+            <property key="data" type="datasource" isList="true" required="false">
+                <caption>Data source</caption>
+                <description/>
+            </property>
+
+        </propertyGroup>
+
+
+        <propertyGroup caption="Headers">
+            <property key="columnList" type="object" isList="true" required="false">
+                <caption>Header List</caption>
+                <description/>
+                <properties>
+                    <propertyGroup caption="General">
+                        <property key="headerSeq" type="integer" required="true" defaultValue="999">
+                            <caption>DisplaySequence</caption>
+                            <description/>
+                        </property>
+
+                        <property key="datasourceColumn" type="attribute" dataSource="../data" required="true">
+                            <caption>header-attribute</caption>
+                            <description>link header and datasource attribute</description>
+                            <attributeTypes>
+                                <attributeType name="String"/>
+                                <attributeType name="DateTime"/>
+                                <attributeType name="Decimal"/>
+                                <attributeType name="Integer"/>
+                                <attributeType name="Long"/>
+                                <attributeType name="Enum"/>
+                                <attributeType name="Boolean"/>
+                            </attributeTypes>
+                        </property>
+
+                        <property key="headerName" type="textTemplate" required="true">
+                            <caption>headerName</caption>
+                            <description/>
+                        </property>
+
+                    </propertyGroup>
+                </properties>
+            </property>
+        </propertyGroup>
+    </properties>
+</widget>
+```
