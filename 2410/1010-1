@@ -1,0 +1,73 @@
+```
+import React from 'react';
+import Calendar from '@toast-ui/react-calendar';
+import '@toast-ui/calendar/dist/toastui-calendar.min.css';
+
+class HolidayCalendar extends React.Component {
+  // 달력을 참조할 수 있게 하는 ref
+  calendarRef = React.createRef();
+
+  // 상태 정의: 달력의 뷰와 일정
+  state = {
+    view: 'month', // 기본 뷰는 'month'
+    schedules: [
+      { id: '1', title: '새해', date: '2024-01-01', isHoliday: true },
+      { id: '2', title: '설날', date: '2024-02-10', isHoliday: true },
+      { id: '3', title: '회의', date: '2024-01-15', isHoliday: false },
+    ],
+  };
+
+  // 공휴일 확인 함수
+  isHoliday = (date) => {
+    return this.state.schedules.find(schedule => 
+      schedule.isHoliday && schedule.date === date.toISOString().slice(0, 10)
+    );
+  };
+
+  // 달력 뷰 변경
+  handleViewChange = (view) => {
+    this.setState({ view });
+  };
+
+  render() {
+    return (
+      <div>
+        {/* 뷰 변경 버튼 */}
+        <div>
+          <button onClick={() => this.handleViewChange('month')}>Month</button>
+          <button onClick={() => this.handleViewChange('week')}>Week</button>
+          <button onClick={() => this.handleViewChange('day')}>Day</button>
+        </div>
+
+        {/* 달력 컴포넌트 */}
+        <Calendar
+          ref={this.calendarRef}
+          height="900px"
+          view={this.state.view}
+          schedules={this.state.schedules.map(schedule => ({
+            id: schedule.id,
+            title: schedule.title,
+            start: schedule.date, // 일정의 시작 날짜
+            end: schedule.date,   // 일정의 끝 날짜
+            category: 'allday',   // 하루 종일 일정으로 설정
+            isHoliday: schedule.isHoliday,
+          }))}
+          isReadOnly={true}
+          // 템플릿을 사용해 공휴일을 빨간색으로 표시
+          template={{
+            monthGridHeader: ({ date }) => {
+              const holiday = this.isHoliday(date);
+              const dateText = date.getDate();
+              const style = holiday ? 'color: red;' : '';
+              return `<span style="${style}">${dateText}</span>`;
+            },
+          }}
+        />
+      </div>
+    );
+  }
+}
+
+export default HolidayCalendar;
+
+```
