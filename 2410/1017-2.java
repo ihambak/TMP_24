@@ -1,23 +1,25 @@
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.Duration;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class RandomDateTime {
-    public static void main(String[] args) {
-        // 시작 날짜와 끝 날짜 설정
-        LocalDateTime startDate = LocalDateTime.of(2020, 1, 1, 0, 0);
-        LocalDateTime endDate = LocalDateTime.of(2024, 12, 31, 23, 59);
-
-        // 초 단위 차이 계산
-        long startSeconds = startDate.toEpochSecond(java.time.ZoneOffset.UTC);
-        long endSeconds = endDate.toEpochSecond(java.time.ZoneOffset.UTC);
-
+public class RandomDateTimeGenerator {
+    public static LocalDateTime getRandomDateTime(LocalDateTime start, LocalDateTime end) {
+        // 두 일시 사이의 차이를 초 단위로 계산
+        long secondsBetween = Duration.between(start, end).getSeconds();
+        
         // 랜덤 초 생성
-        long randomSeconds = ThreadLocalRandom.current().nextLong(startSeconds, endSeconds);
+        long randomSeconds = ThreadLocalRandom.current().nextLong(0, secondsBetween + 1);
 
-        // 랜덤 날짜 시간 생성
-        LocalDateTime randomDateTime = LocalDateTime.ofEpochSecond(randomSeconds, 0, java.time.ZoneOffset.UTC);
+        // 시작 일시에 랜덤 초를 더하여 랜덤 일시 생성
+        return start.plusSeconds(randomSeconds);
+    }
 
-        System.out.println("랜덤한 날짜와 시간: " + randomDateTime);
+    public static void main(String[] args) {
+        LocalDateTime startDateTime = LocalDateTime.of(2023, 1, 1, 0, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2023, 12, 31, 23, 59);
+
+        LocalDateTime randomDateTime = getRandomDateTime(startDateTime, endDateTime);
+
+        System.out.println("랜덤 생성된 일시: " + randomDateTime);
     }
 }
